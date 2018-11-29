@@ -9,7 +9,8 @@ confluence:
   reverseProxyHost: conf.cenoq.com
   reverseProxyPort: 80
   reverseProxyScheme: http
-  javaHeapSize: 4096m
+  javaHeapMinSize: 1024m
+  javaHeapMaxSize: 2048m
   javaMemoryOptions: "-XX:MaxMetaspaceSize=512m -XX:MaxDirectMemorySize=10m"
   javaOptions: ""
 

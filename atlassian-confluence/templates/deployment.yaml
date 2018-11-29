@@ -35,9 +35,9 @@ spec:
             - name: CATALINA_CONNECTOR_SECURE
               value: {{ (eq "https" .Values.confluence.reverseProxyScheme) | quote }}
             - name: JVM_MINIMUM_MEMORY
-              value: {{ .Values.confluence.javaHeapSize | quote }}
+              value: {{ .Values.confluence.javaHeapMinSize | quote }}
             - name: JVM_MAXIMUM_MEMORY
-              value: {{ .Values.confluence.javaHeapSize | quote }}
+              value: {{ .Values.confluence.javaHeapMaxSize | quote }}
             - name: JVM_SUPPORT_RECOMMENDED_ARGS
               value: {{ printf "%s %s -Dsynchrony.memory.max=%s" .Values.confluence.javaMemoryOptions .Values.confluence.javaOptions .Values.synchrony.javaHeapSize | quote }}
           ports:
