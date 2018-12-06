@@ -1,0 +1,93 @@
+# login k8s
+# for gcloud
+gcloud container clusters get-credentials devops-cluster --zone asia-east2-c --project graphic-jet-223109
+# for kubectl
+
+
+# install tiller
+kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl -n kube-system patch deployment tiller-deploy -p "{\"spec\":{\"template\":{\"spec\":{\"serviceAccount\":\"tiller\"}}}}"
+helm init --service-account tiller --upgrade
+
+
+# install gitlab (http://gitlab.cenoq.com) (8 vCPU and 16G Ram required) (root/1qaz2wsx3edc$)
+helm upgrade --install gitlab gitlab/gitlab \
+  --timeout 600 \
+  --set global.hosts.domain=cenoq.com \
+  --set global.hosts.externalIP=35.194.157.4 \
+  --set certmanager-issuer.email=service@cenoq.com \
+  --set gitlab.migrations.image.repository=registry.gitlab.com/gitlab-org/build/cng/gitlab-rails-ce \
+  --set gitlab.sidekiq.image.repository=registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce \
+  --set gitlab.unicorn.image.repository=registry.gitlab.com/gitlab-org/build/cng/gitlab-unicorn-ce \
+  --set gitlab.unicorn.workhorse.image=registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce \
+  --set gitlab.task-runner.image.repository=registry.gitlab.com/gitlab-org/build/cng/gitlab-task-runner-ce
+
+kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath={.data.password} | base64 --decode ; echo
+helm delete gitlab
+helm del --purge gitlab
+
+
+https://github.com/helm/charts
+
+# install jenkins (http://jenkins.cenoq.com:8080) (admin/0FudUQZkMC)
+helm install --name jenkins  stable/jenkins
+helm delete jenkins
+helm del --purge jenkins
+
+kubectl exec -it deadly-quokka-jenkins-77847bdc75-jflnt -- /bin/bash
+git config --global http.sslVerify false
+
+# install sornaqube (http://sona.cenoq.com:9000) (admin/1qaz2wsx3edc$) (admin/admin by default)
+helm install --name sonarqube stable/sonarqube
+helm delete sonarqube
+helm del --purge sonarqube
+
+# install jira/confulence
+helm install --name atlassian-jira-software ./atlassian-jira-software
+helm install --name atlassian-confluence ./atlassian-confluence
+helm install --name atlassian-fisheye ./atlassian-fisheye
+helm install --name atlassian-crucible ./atlassian-crucible
+
+helm delete atlassian-jira-software
+helm delete atlassian-confluence
+helm delete atlassian-fisheye  
+helm delete atlassian-crucible  
+
+
+http://jira.cenoq.com
+http://conf.cenoq.com
+http://jenkins.cenoq.com:8080 (admin/R2vGpCleNW)
+http://sona.cenoq.com:9000 (admin/1qaz2wsx3edc$)
+https://gitlab.cenoq.com (root/1qaz2wsx3edc$)
+http://fish.cenoq.com
+http://fish.cenoq.com/admin   (1qaz2wsx3edc$)
+
+oc cluster up --public-hostname=10.0.0.229 --skip-registry-check=true
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+
+
+Jenkins token for jira
+-------------------------------------
+JIRA : 115885830a36721b550196b0b0dab76e2b
+
+
+Gitlab token for jira
+-------------------------------------
+Er_P_2jPZCmq-77Hn7Es
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
